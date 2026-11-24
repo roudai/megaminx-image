@@ -1,50 +1,152 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: (template, unversioned) → 1.0.0
+- Modified principles: すべて新規（テンプレートのプレースホルダーを置き換え）
+  - I. 既存のサイトと同じ結果（最優先）
+  - II. 依存なし・どこでも動く
+  - III. テストを先に（譲れない）
+  - IV. 同じ入力なら同じ出力
+  - V. 小さく安定した公開の API
+  - VI. 間違いはエラーにする
+  - VII. 必要なものだけ作る
+  - VIII. 文書
+- Added sections: 前提と対象範囲 / 開発の流れと品質ゲート / Governance
+- Removed sections: なし
+- Templates:
+  - ✅ .specify/templates/tasks-template.md（テストを「任意」から「必須・先に書く」へ）
+  - ✅ .specify/templates/plan-template.md（Constitution Check に原則ごとの確認項目を追加）
+  - ✅ .specify/templates/spec-template.md（変更不要：原則と矛盾する必須項目なし）
+  - ✅ .specify/templates/commands/*.md（存在しない）
+  - ⚠ README.md（ライブラリの中身ができてから原則 VIII に沿って書く）
+- Deferred TODOs: なし
+-->
+
+# megaminx-image Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. 既存のサイトと同じ結果（最優先）
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+- 同じ入力に対して、既存の Web サイト「Megaminx Image Editor」と同じステッカーの色を
+  出さなければならない（MUST）。回転記号の読み方（読める・読めない・エラーになる）も
+  サイトと同じでなければならない（MUST）。
+- サイトのリポジトリから書き出した期待値（PLL・OLL の全ケース）を正とし、
+  テストで常に確かめなければならない（MUST）。
+- サイトと違う結果にしたいときは、原則の変更（Governance の手順）として理由を残してから
+  変えなければならない（MUST）。黙って変えてはならない（MUST NOT）。
+- 原則どうしがぶつかったときは、この原則を優先する。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**なぜ**: このライブラリはサイトのロジックを切り出したものであり、利用者は「サイトと同じ絵」
+が出ることを前提にする。結果がずれると、サイトで作った画像とライブラリで作った画像が
+混ざったときに気づきにくい誤りになる。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. 依存なし・どこでも動く
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+- 実行時に必須の依存パッケージを持ってはならない（MUST NOT）。PNG の書き出しなど、
+  どうしても要るものは任意の依存（optional / peer）にし、それが無くてもほかの機能は
+  動かなければならない（MUST）。
+- 状態の計算と SVG の生成は DOM や canvas に依存せず、Node.js でもブラウザでも同じように
+  動かなければならない（MUST）。canvas に描く処理はブラウザ用の薄い層として分ける（MUST）。
+- 型定義（TypeScript の `.d.ts`）を付けなければならない（MUST）。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**なぜ**: 依存が少ないほど、入れる側の負担・脆弱性・壊れる原因が減る。計算と描画を環境から
+切り離せば、サーバーでの一括生成・ブラウザでの表示・テストのどれでも同じコードを使える。
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. テストを先に（譲れない）
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- 機能を足す・直すときは、先にテストを書き、失敗することを確かめてから作らなければならない
+  （MUST）。
+- 不具合を直すときは、その不具合を再現するテストを足さなければならない（MUST）。
+- 期待値（ゴールデン）のテストと、記法の読み方の境目（エラーになる手順を含む）のテストを
+  必ず持たなければならない（MUST）。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**なぜ**: 原則 I の「サイトと同じ」はテストでしか保証できない。先に失敗を見ることで、
+テストが本当にその振る舞いを確かめていることが分かり、同じ不具合の再発も防げる。
+
+### IV. 同じ入力なら同じ出力
+
+- 乱数や時刻を使ってはならない（MUST NOT）。同じ入力なら、SVG の文字列はバイト単位で
+  同じでなければならない（MUST）。
+- 座標などの数値の丸め方（桁数・方法）を決めて文書に書き、Node.js のバージョンやブラウザの
+  違いで出力が変わらないようにしなければならない（MUST）。
+
+**なぜ**: 出力が決まっていれば、文字列の比較だけでゴールデンテストができ、キャッシュや
+差分の確認もしやすい。浮動小数点の表記の揺れは環境差の原因になりやすい。
+
+### V. 小さく安定した公開の API
+
+- 公開する関数・オプション・ステッカーの並び順は少なく保ち、文書に書いて固定しなければ
+  ならない（MUST）。
+- セマンティック バージョニングに従わなければならない（MUST）。公開の API・出力の見た目・
+  ステッカーの並び順を変えるのは、メジャー バージョンを上げるときだけとする（MUST）。
+- 内部の関数を公開してはならない（MUST NOT）。
+
+**なぜ**: 公開したものは利用者が頼りにするため、あとから変えにくい。公開の面を小さく保てば、
+内部はあとから自由に直せる。画像の見た目やステッカーの並び順も、利用者にとっては API の一部である。
+
+### VI. 間違いはエラーにする
+
+- 読めない手順、配色に無い面、知らない色の指定などは、どこが悪いか分かるメッセージの
+  エラーにしなければならない（MUST）。
+- 黙って無視したり、それらしい結果を返したりしてはならない（MUST NOT）。
+
+**なぜ**: 間違った入力からそれらしい画像が出ると、利用者は誤りに気づけない。早く・はっきり
+失敗するほうが、原因を探す手間が小さい。
+
+### VII. 必要なものだけ作る
+
+- 今の目的（最後の層の画像）に要るものだけを作らなければならない（MUST）。全体の展開図・
+  練習・記録・画面の操作などは、要ると決まるまで作ってはならない（MUST NOT）。
+- ただし、あとで足せないような作り方（上面専用の決め打ちで、全体に広げられないなど）は
+  避けなければならない（MUST）。
+
+**なぜ**: 作るものが少ないほど、原則 I〜VI を守るための確認も少なくて済む。一方で、広げ方を
+最初から塞いでしまうと、あとで作り直しになる。
+
+### VIII. 文書
+
+- README に、記法・画像の作り方・配色・出力・ステッカーの並び順を、画像の例と一緒に
+  書かなければならない（MUST）。
+- README の画像の例は、ライブラリ自身で作り直せなければならない（MUST）。手で作った画像を
+  置いてはならない（MUST NOT）。
+- 公開の README・API の名前・エラーのメッセージは英語とする（MUST）。仕様書・計画・
+  コミットメッセージなど開発の文書は日本語とする（MUST）。
+
+**なぜ**: npm の利用者は世界中にいるため、公開する部分は英語にする。例の画像をライブラリで
+作り直せれば、文書と実際の出力がずれない。開発の文書は、開発者がいちばん正確に書ける言葉で書く。
+
+## 前提と対象範囲
+
+- 作るもの: メガミンクスの最後の層（上面）の画像を、回転記号の手順や色の指定から作る
+  npm ライブラリ。
+- 出どころ: 既存の Web サイト「Megaminx Image Editor」の状態計算と描画のロジックを、
+  サイトの画面から切り離したもの。
+- 動く環境: Node.js とブラウザ（原則 II）。
+- 正とする基準: サイトのリポジトリから書き出した期待値（原則 I）。
+
+## 開発の流れと品質ゲート
+
+- 仕様（spec）・計画（plan）・タスク（tasks）を作るときは、この原則に合っているかを確かめ、
+  合わないところがあれば理由を書かなければならない（MUST）。計画では
+  「Constitution Check」と「Complexity Tracking」に書く。
+- 変更を取り込む前に、次がすべて通っていなければならない（MUST）。
+  - 期待値（PLL・OLL の全ケース）のテスト（原則 I・III）
+  - 記法の読み方の境目・エラーのテスト（原則 III・VI）
+  - 同じ入力で同じ SVG になることの確認（原則 IV）
+  - 実行時に必須の依存が増えていないことの確認（原則 II）
+  - 公開の API・見た目・並び順を変えた場合は、メジャー バージョンを上げる変更になっていること
+    （原則 V）
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- この原則は、ほかの開発の取り決めより優先する。
+- 原則を変えるときは、変える理由と影響（既存の利用者・期待値への影響）を書き、原則の版を
+  上げなければならない（MUST）。変更はこのファイル冒頭の Sync Impact Report に残す。
+- 原則の版はセマンティック バージョニングで上げる。
+  - MAJOR: 原則を消す・意味を変えるなど、これまでと両立しない変更
+  - MINOR: 原則や節を足す、決まりを大きく広げる
+  - PATCH: 言い回しの修正・説明の追加など、意味を変えない変更
+- 原則 I に反してサイトと違う結果にする場合も、この手順で原則の変更として記録する。
+- レビューでは、変更がこの原則に合っているかを確かめる。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24

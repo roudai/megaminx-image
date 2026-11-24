@@ -53,7 +53,8 @@
     "test:browser": "npm run build && playwright test -c test/browser --pass-with-no-tests",
     "export:site": "node scripts/export-from-site.mjs",
     "build:geometry": "node scripts/build-geometry-table.mjs",
-    "build:readme-images": "npm run build && node scripts/build-readme-images.mjs"
+    "build:readme-images": "npm run build && node scripts/build-readme-images.mjs",
+    "prepublishOnly": "npm run build && npm run typecheck && npm test"
   },
   "peerDependencies": {
     "@resvg/resvg-js": "^2.6.2"

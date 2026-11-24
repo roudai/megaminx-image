@@ -1,0 +1,33 @@
+name: Publish
+
+# GitHub で Release を公開（published）すると npm に公開する。
+# npm の Trusted Publishing（OIDC）を使うので、トークンもワンタイムパスワードも要らない。
+# 事前に npmjs.com のパッケージの設定で、このリポジトリと publish.yml を信頼する公開元として登録しておく。
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - run: npm ci
+      - name: Tag matches package.json version
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+      # ビルド・型の確認・テストは prepublishOnly で走る
+      - run: npm publish

@@ -1,0 +1,73 @@
+{
+  "name": "megaminx-image",
+  "version": "1.0.0",
+  "description": "Generate images of the Megaminx last layer from algorithms or sticker colors (SVG, canvas, PNG).",
+  "keywords": [
+    "megaminx",
+    "cubing",
+    "speedcubing",
+    "svg",
+    "pll",
+    "oll"
+  ],
+  "license": "MIT",
+  "author": "roudai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roudai/megaminx-image.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./canvas": {
+      "types": "./dist/canvas.d.ts",
+      "default": "./dist/canvas.js"
+    },
+    "./png": {
+      "types": "./dist/png.d.ts",
+      "default": "./dist/png.js"
+    },
+    "./cases": {
+      "types": "./dist/cases/index.d.ts",
+      "default": "./dist/cases/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --exclude test/perf.test.ts",
+    "test:perf": "vitest run test/perf.test.ts",
+    "test:browser": "npm run build && playwright test -c test/browser --pass-with-no-tests",
+    "export:site": "node scripts/export-from-site.mjs",
+    "build:geometry": "node scripts/build-geometry-table.mjs",
+    "build:readme-images": "npm run build && node scripts/build-readme-images.mjs"
+  },
+  "peerDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "peerDependenciesMeta": {
+    "@resvg/resvg-js": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.1"
+  }
+}

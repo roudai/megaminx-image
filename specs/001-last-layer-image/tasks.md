@@ -24,8 +24,8 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 **Purpose**: パッケージとテストの道具を用意する
 
-- [ ] T001 `package.json` を作る：`name: "megaminx-image"`・`version: "1.0.0"`・`type: "module"`・`license: "MIT"`・
-  `engines.node: ">=20.19"`・`sideEffects: false`・`files: ["dist", "LICENSE", "README.md"]`・
+- [X] T001 `package.json` を作る：`name: "megaminx-image"`・`version: "1.0.0"`・`type: "module"`・`license: "MIT"`・
+  `engines.node: ">=22.12"`・`sideEffects: false`・`files: ["dist", "LICENSE", "README.md"]`・
   `exports` に `"."`・`"./canvas"`・`"./png"`・`"./cases"`（それぞれ `types` と `default` を `dist/` の `.d.ts`・`.js` に）。
   `dependencies` は書かない。`peerDependencies` に `@resvg/resvg-js` を書き（範囲は `npm view @resvg/resvg-js version` で最新の版を見て決める）、
   `peerDependenciesMeta` で任意にする。
@@ -34,16 +34,16 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
   `test:perf`（`vitest run test/perf.test.ts`）・`test:browser`（`npm run build && playwright test -c test/browser`）・
   `export:site`（`node scripts/export-from-site.mjs`）・`build:geometry`（`node scripts/build-geometry-table.mjs`）・
   `build:readme-images`（`npm run build && node scripts/build-readme-images.mjs`）。`npm install` を実行する
-- [ ] T002 [P] `LICENSE`（MIT、著作者 roudai、2026）と `.gitignore`（`node_modules/`・`dist/`・`test-results/`・
+- [X] T002 [P] `LICENSE`（MIT、著作者 roudai、2026）と `.gitignore`（`node_modules/`・`dist/`・`test-results/`・
   `playwright-report/`）を作る
-- [ ] T003 [P] `tsconfig.json`（`strict`・`target: ES2020`・`module`/`moduleResolution: NodeNext`・`noEmit`、
+- [X] T003 [P] `tsconfig.json`（`strict`・`target: ES2020`・`module`/`moduleResolution: NodeNext`・`noEmit`、
   `src`・`test`・`scripts` を含む）と `tsconfig.build.json`（`src` だけ、`outDir: dist`・`declaration: true`・
   `noEmit: false`）を作る
-- [ ] T004 [P] `vitest.config.ts`（`test/**/*.test.ts`、環境は node）と `test/browser/playwright.config.ts`
+- [X] T004 [P] `vitest.config.ts`（`test/**/*.test.ts`、環境は node）と `test/browser/playwright.config.ts`
   （Chromium・Firefox・WebKit の 3 つ）を作る。`vitest.config.ts` には `passWithNoTests: true` を付ける
   （中身ができるまで CI が失敗しないように）
-- [ ] T005 [P] `.github/workflows/ci.yml` を作る（原則の「開発の流れと品質ゲート」）。プルリクエストと main への push で動かす。
-  Node.js 20.x と 24.x の両方で：`npm ci` → `npm run build` → `npm test`
+- [X] T005 [P] `.github/workflows/ci.yml` を作る（原則の「開発の流れと品質ゲート」）。プルリクエストと main への push で動かす。
+  Node.js 22.x と 24.x の両方で：`npm ci` → `npm run build` → `npm test`
   → `dependencies` が空かの確認（`node -e "process.exit(Object.keys(require('./package.json').dependencies||{}).length)"`）
   → `npx playwright install --with-deps` → `npm run test:browser`
   → `npm run build:readme-images && git diff --exit-code docs/images`。
@@ -59,7 +59,7 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 ### 正解データの書き出し（research.md R4）
 
-- [ ] T006 `scripts/export-from-site.mjs` を作る。`SITE_REPO`（既定 `../MegaminxImageEditor`）から
+- [X] T006 `scripts/export-from-site.mjs` を作る。`SITE_REPO`（既定 `../MegaminxImageEditor`）から
   `createRequire` で `js/megaminx-state.js`・`js/pll-data.js`・`js/oll-data.js` を読み、
   `js/megaminx-draw.js` はソースを文字列で読み、`window.MegaminxDraw = { draw: draw,` を
   `window.MegaminxDraw = { stickers: stickers, geometry: geometry, draw: draw,` に置き換えてから
@@ -83,39 +83,39 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
     `export const PLL_CASES = Object.freeze([...])`（各件 `Object.freeze({ name, group, alg, setup })`）。
     型は `src/cases/types.ts` の `CaseEntry`（T007 で作る）
   - サイトのコミットは `git -C $SITE_REPO rev-parse HEAD` で得る
-- [ ] T007 `src/cases/types.ts` に `CaseEntry`（`readonly name/group/alg/setup: string`）を書き、
+- [X] T007 `src/cases/types.ts` に `CaseEntry`（`readonly name/group/alg/setup: string`）を書き、
   `npm run export:site` を実行して `test/golden/*.json`・`src/cases/pll.ts`・`src/cases/oll.ts` を作る。
   件数が PLL 151・OLL 259 であることを確かめる
 
 ### テスト（先に書いて失敗を確かめる）
 
-- [ ] T008 [P] `test/notation.test.ts`：内部の `parseAlg`（`src/notation.ts`）のテスト
+- [X] T008 [P] `test/notation.test.ts`：内部の `parseAlg`（`src/notation.ts`）のテスト
   - `contracts/notation.md` の置き換え・文法・回数（5 で割った余り、`'` で負）・括弧の回数と逆・入れ子・空の括弧
   - `test/golden/notation.json` の各件：`ok` が同じ。読めないものはエラーの型（`SyntaxError`）が同じで、
     メッセージがサイトのメッセージで始まる
   - 位置：`"R U Q"` → `(at position 4)`、`"R　　Q"`（全角の空白 2 つ）→ 元の文字列の位置 `(at position 3)`、
     `"(R U"` → `(opened at position 0)`、`"R U)"` → `(at position 3)`
-- [ ] T009 [P] `test/state.test.ts`：内部の `src/state.ts` のテスト
+- [X] T009 [P] `test/state.test.ts`：内部の `src/state.ts` のテスト
   - 132 枚、面ごとに 11 枚。各面の回転と `y` は 5 回で元に戻る
   - 固定のシードのランダムな手順（サイトの `test/megaminx-state.test.js` と同じ乱数）で、手順を回してから
     逆を回すと揃った状態に戻る
   - `test/golden/notation.json` の読める件で、揃った状態から回した 26 色（既定の配色）が `colors` と同じ
-- [ ] T010 [P] `test/colors.test.ts`：`COLOR_CODES`（15 個、`data-model.md` の表と同じ 16 進）、色の検証
+- [X] T010 [P] `test/colors.test.ts`：`COLOR_CODES`（15 個、`data-model.md` の表と同じ 16 進）、色の検証
   （`'o'`・`'#FFA500'` は通り、`'orange'`・`'#fff'`・`'O'`・`''`・`null` は `TypeError: Unknown color: "…"`）、
   `DEFAULT_SCHEME` の 12 面
 
 ### 実装
 
-- [ ] T011 `src/notation.ts`：サイトの `normalize`・`readAmount`・`parseAlg`・`invertMoves`・`canonicalFace` を写す。
+- [X] T011 `src/notation.ts`：サイトの `normalize`・`readAmount`・`parseAlg`・`invertMoves`・`canonicalFace` を写す。
   置き換えで縮んだ空白の位置を元の文字列に戻す対応表を持ち、エラーのメッセージに位置を足す
   （`contracts/api.md` のエラーの表）。`Move = { face, turns }` を内部の型として export（入口からは出さない）
-- [ ] T012 `src/state.ts`：サイトの幾何（法線・132 枚の位置・`makeMove`・`MOVES`）・`solved`・`applyMoves`・
+- [X] T012 `src/state.ts`：サイトの幾何（法線・132 枚の位置・`makeMove`・`MOVES`）・`solved`・`applyMoves`・
   `applyAlg(alg, { inverse, cancelRotation, state })`・`netRotation`・`topView`・`toImageColors` の並べ方を写す。
   `toImageColors` は 26 個の面の名前の配列（`ucolor` 11 → `scolor` 15 の順）を返す `topFaces(state)` にする
-- [ ] T013 `src/colors.ts`：`COLOR_CODES`（凍結）・`isColor`・`normalizeColor`（16 進は小文字に）・
+- [X] T013 `src/colors.ts`：`COLOR_CODES`（凍結）・`isColor`・`normalizeColor`（16 進は小文字に）・
   `assertColor(value, label)`・`DEFAULT_SCHEME`（凍結）・`resolveScheme(scheme)`（知らない面は
   `TypeError: Unknown face: "…"`、色の検証）・`toHex(color)`
-- [ ] T014 T008〜T010 がすべて通ることを確かめる（`npx vitest run test/notation.test.ts test/state.test.ts test/colors.test.ts`）
+- [X] T014 T008〜T010 がすべて通ることを確かめる（`npx vitest run test/notation.test.ts test/state.test.ts test/colors.test.ts`）
 
 **Checkpoint**: サイトと同じに読み・回せる。ストーリーに進める
 
@@ -129,36 +129,36 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 ### Tests for User Story 1（先に書いて失敗を確かめる）⚠️
 
-- [ ] T015 [P] [US1] `test/stickers.test.ts`：`stickerColors()` が揃った状態（番号 15〜17 が `a`）。
+- [X] T015 [P] [US1] `test/stickers.test.ts`：`stickerColors()` が揃った状態（番号 15〜17 が `a`）。
   `test/golden/cases.json` の 410 件すべてで `stickerColors({ case: alg })` が `case`、
   `stickerColors({ alg: setup })` が `apply` と同じ。`{ start: "R U", alg: "U' R'" }` と `{ start: "R", case: "R" }` が揃った状態の色になる
   （`start` の状態から計算する）。持ち替えの打ち消しは case だけ（`{ alg: 'y' }` は揃った状態と違い、`{ case: 'y' }` は同じ）
-- [ ] T016 [P] [US1] `test/geometry.test.ts`：大きさ 1 の表が計算式（`Math.cos`・`Math.sin`）と 1e-12 まで合う。
+- [X] T016 [P] [US1] `test/geometry.test.ts`：大きさ 1 の表が計算式（`Math.cos`・`Math.sin`）と 1e-12 まで合う。
   大きさ 200 の 26 枚の多角形が `test/golden/geometry.json` と小数第 2 位で一致し、描く順が同じ。
   細い線 2・太い線 4（大きさ 200）、`round` が `Math.round(v * 100) / 100`
-- [ ] T017 [P] [US1] `test/svg.test.ts`：揃った状態・既定の設定の SVG が `contracts/api.md` の形
+- [X] T017 [P] [US1] `test/svg.test.ts`：揃った状態・既定の設定の SVG が `contracts/api.md` の形
   （`<svg …>` → 線の `<g>` に 26 個の `<polygon>` → 太い線の `<g>` に 2 つの `<polygon>` と `<path>`、改行なし）。
   色は小文字の 16 進。数値に末尾の 0 が無い。同じ入力で 2 回作ると同じ文字列。背景が無いとき `<rect>` が無い。
   SVG の全文を `test/svg/solved-200.svg` に保存して比べる（初回は中身を目で確かめてから保存する）
-- [ ] T018 [P] [US1] `test/cases.test.ts`：`PLL_CASES` 151 件・`OLL_CASES` 259 件、名前が種類の中で重ならない、
+- [X] T018 [P] [US1] `test/cases.test.ts`：`PLL_CASES` 151 件・`OLL_CASES` 259 件、名前が種類の中で重ならない、
   各件が `name`・`group`・`alg`・`setup` の文字列だけを持ち凍結されている、`test/golden/cases.json` と同じ並び・同じ中身
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] `scripts/build-geometry-table.mjs`：サイトの `geometry` の式（大きさ 1、`origin = 0.5`）で、
+- [X] T019 [US1] `scripts/build-geometry-table.mjs`：サイトの `geometry` の式（大きさ 1、`origin = 0.5`）で、
   中心・U 面の外周・側面の外周の五角形の頂点 5 つずつと、辺の点（`in`・`out` × 辺 0〜4 × `l` 0・1）を
   17 桁で求め、`src/geometry-table.ts`（`// 自動生成` と凍結した数値の表）に書く。`npm run build:geometry` で作る
-- [ ] T020 [US1] `src/geometry.ts`：表と大きさから、サイトの `stickers` と同じ 26 枚の多角形（描く順・`u`/`s` の番号）、
+- [X] T020 [US1] `src/geometry.ts`：表と大きさから、サイトの `stickers` と同じ 26 枚の多角形（描く順・`u`/`s` の番号）、
   太い線（U 面の外周・側面の外周・区切り 5 本）、線の太さ（`size / 100`・`size / 50`）を返す。数値は `round`
-- [ ] T021 [US1] `src/stickers.ts`：`resolveState(options)`（`alg`／`case`／なし、`start`、既定の配色）→ 26 個の色。
+- [X] T021 [US1] `src/stickers.ts`：`resolveState(options)`（`alg`／`case`／なし、`start`、既定の配色）→ 26 個の色。
   `case` は `applyAlg(case, { inverse: true, cancelRotation: true, state: start の状態 })`、
   `alg` は `applyAlg(alg, { state })`。`stickerColors(options)` として公開する形にする
-- [ ] T022 [US1] `src/svg.ts`：`svg(options)`。`contracts/api.md` の形・属性の順で文字列を組み立てる
+- [X] T022 [US1] `src/svg.ts`：`svg(options)`。`contracts/api.md` の形・属性の順で文字列を組み立てる
   （`size` 既定 200、`lineColor` 既定 `#000000`、`background` 既定 `null`）
-- [ ] T023 [US1] `src/cases/index.ts`（`PLL_CASES`・`OLL_CASES`・`type CaseEntry` を export）と `src/index.ts`
+- [X] T023 [US1] `src/cases/index.ts`（`PLL_CASES`・`OLL_CASES`・`type CaseEntry` を export）と `src/index.ts`
   （`svg`・`stickerColors`・`DEFAULT_SCHEME`・`COLOR_CODES` と型 `Face`・`ColorCode`・`Color`・`Scheme`・
   `StateOptions`・`ImageOptions`）を作る。内部の関数は export しない
-- [ ] T024 [US1] T015〜T018 が通ることを確かめ、`npm run build` のあと `quickstart.md` の 2 の手順で
+- [X] T024 [US1] T015〜T018 が通ることを確かめ、`npm run build` のあと `quickstart.md` の 2 の手順で
   `t-perm.svg` ができ、ブラウザで開いて F 面が手前に見えることを確かめる
 
 **Checkpoint**: MVP。手順から SVG を作れ、サイトと同じ色になる

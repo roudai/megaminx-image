@@ -14,7 +14,7 @@
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.x → ES2020 の ES モジュール。Node.js 20.19 以上（開発は 24）
+**Language/Version**: TypeScript 5.x → ES2020 の ES モジュール。Node.js 22.12 以上（開発は 24）
 
 **Primary Dependencies**: 実行時の必須の依存なし。任意：`@resvg/resvg-js`（PNG だけ）。
 開発：`typescript`・`vitest`・`playwright`・`@resvg/resvg-js`
@@ -23,7 +23,7 @@
 
 **Testing**: Vitest（Node.js）、Playwright（Chromium・Firefox・WebKit で SVG の一致）
 
-**Target Platform**: Node.js 20.19 以上、ES2020 が動くブラウザ（canvas は `OffscreenCanvas` も）
+**Target Platform**: Node.js 22.12 以上、ES2020 が動くブラウザ（canvas は `OffscreenCanvas` も）
 
 **Project Type**: library（npm パッケージ、入口 4 つ）
 

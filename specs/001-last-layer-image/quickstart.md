@@ -5,7 +5,7 @@
 
 ## 用意
 
-- Node.js 20.19 以上（開発は 24）、npm
+- Node.js 22.12 以上（開発は 24）、npm
 - 正解データを書き出し直すときだけ、サイトのリポジトリ（既定 `../MegaminxImageEditor`、`SITE_REPO` で変更）
 - ブラウザのテストだけ、Playwright のブラウザ（`npx playwright install`）
 

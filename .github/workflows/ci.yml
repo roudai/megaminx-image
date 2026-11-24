@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22.x, 24.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm test
+      - name: No required runtime dependencies (principle II)
+        run: node -e "process.exit(Object.keys(require('./package.json').dependencies||{}).length)"
+      - run: npx playwright install --with-deps
+      - run: npm run test:browser
+      - name: README images are reproducible (principle VIII)
+        run: |
+          if [ -f scripts/build-readme-images.mjs ]; then
+            npm run build:readme-images
+            git diff --exit-code docs/images
+          fi

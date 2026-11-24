@@ -28,9 +28,11 @@
 ## R1. 言語・配布の形
 
 - **Decision**: TypeScript で書き、ES モジュールだけを配布する（`"type": "module"`、`exports` で入口を分ける）。
-  対象は Node.js 20.19 以上と、ES2020 が動くブラウザ。型定義（`.d.ts`）は `tsc` で出す
-- **Rationale**: 型定義が要る（原則 II）。Node.js 20.19 以上は CommonJS から `require()` で ES モジュールを
+  対象は Node.js 22.12 以上と、ES2020 が動くブラウザ。型定義（`.d.ts`）は `tsc` で出す
+- **Rationale**: 型定義が要る（原則 II）。Node.js 22.12 以上は CommonJS から `require()` で ES モジュールを
   読めるので、CommonJS 版を別に作らなくても両方から使える。作る物が 1 種類なら、出力の食い違いも起きない
+- **変更（2026-11-24、実装の前）**: 計画では 20.19 以上としたが、Node.js 20 は 2026 年 4 月でサポートが終わり、
+  Vitest 5 は 22.12 以上でしか動かないため、22.12 以上に上げた（依頼者の判断）。CI は 22 と 24 で回す
 - **Alternatives considered**: ES モジュールと CommonJS の両方を出す（ビルドと確認が倍になる。古い Node は
   サポートが切れている）／JavaScript ＋ 手書きの `.d.ts`（型と実装がずれやすい）
 

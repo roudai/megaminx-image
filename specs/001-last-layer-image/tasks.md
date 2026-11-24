@@ -173,26 +173,26 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 ### Tests for User Story 2（先に書いて失敗を確かめる）⚠️
 
-- [ ] T025 [P] [US2] `test/notation-tools.test.ts`：
+- [X] T025 [P] [US2] `test/notation-tools.test.ts`：
   - `canonicalAlg`：`test/golden/notation.json` の読める件で `canonical` と同じ。`r u bR' Y` → `R U BR' y`。
     読めない件は `SyntaxError`
   - `simplifyAlg`：読める件で `simplified` と同じ。`R R' U U` → `U2`。読めない件は `SyntaxError`
   - `invertAlg`：`R U (R' F)2 BR'` → `BR (F' R)2 U' R'`、`R3` → `R2`、`R5 U` → `U'`、`(R U)2'` → `(U' R')2'`、
     `()` → `""`。固定のシードのランダムな手順（括弧・回数・`'` を含む）で、`alg` を回してから `invertAlg(alg)` を
     回すと揃った状態に戻る。読めない手順は `SyntaxError`
-- [ ] T026 [P] [US2] `test/options.test.ts`：`contracts/api.md` のエラーの表の各行（`svg` と `stickerColors` の両方）。
+- [X] T026 [P] [US2] `test/options.test.ts`：`contracts/api.md` のエラーの表の各行（`svg` と `stickerColors` の両方）。
   `alg`・`case`・`state` を 2 つ以上、`start` と `state`、知らない設定 `algorithm`、`size` が `0`・`-1`・`NaN`・
   `Infinity`・`'200'`、`lineColor: 'black'`、`background: 'none'`、`scheme: { FR: 'o' }`、
   `scheme: { U: 'orange' }`、`alg` が文字列でない（`TypeError`）
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] `src/notation.ts` に `canonicalAlg`（読めなければ `SyntaxError`、読めればサイトと同じ置き換え）・
+- [X] T027 [US2] `src/notation.ts` に `canonicalAlg`（読めなければ `SyntaxError`、読めればサイトと同じ置き換え）・
   `simplifyAlg`（サイトの `simplifyAlg` を写し、`alg` の文字列だけ返す）・`invertAlg`（`contracts/notation.md` の決まり。
   括弧の構造を保つため、読んだ木の形を作る内部の関数を足す）を足す
-- [ ] T028 [US2] `src/stickers.ts`・`src/svg.ts` に設定の検証を足す：知らない設定の名前、作り方の数、`start` と `state`、
+- [X] T028 [US2] `src/stickers.ts`・`src/svg.ts` に設定の検証を足す：知らない設定の名前、作り方の数、`start` と `state`、
   手順が文字列か、`size`・`lineColor`・`background` の検証。メッセージは `contracts/api.md` のとおり
-- [ ] T029 [US2] `src/index.ts` から `canonicalAlg`・`invertAlg`・`simplifyAlg` を export し、T025・T026 が通ることを確かめる
+- [X] T029 [US2] `src/index.ts` から `canonicalAlg`・`invertAlg`・`simplifyAlg` を export し、T025・T026 が通ることを確かめる
 
 **Checkpoint**: US1 と US2 が通る
 

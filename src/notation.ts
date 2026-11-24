@@ -133,3 +133,116 @@ export function parseAlg(alg: string): Move[] {
 
   return seq(null);
 }
+
+// ---- 手順の道具（contracts/notation.md「道具」）----
+
+/** 回数 → ふつうの書き方（既定データと同じ。1 回 X、2 回 X2、3 回 X2'、4 回 X'） */
+const SUFFIX = ['', '', '2', "2'", "'"];
+
+/** 記号を正しい表記に書き直す。例："r u bR' Y" → "R U BR' y"。読めない手順は SyntaxError */
+export function canonicalAlg(alg: string): string {
+  parseAlg(alg); // 読めない手順は読むときと同じエラーにする（サイトは確かめない。plan.md「サイトとの違い」）
+  return normalize(alg).src.replace(new RegExp(FACE_PATTERN, 'gi'), canonicalFace);
+}
+
+/**
+ * 無駄な手順をまとめる（サイトの simplifyAlg の alg と同じ）。
+ *   - 同じ深さで続けて並んだ同じ面（y も）を足し合わせる（R R → R2、R2 R → R2'）。合計 0 回（R R'・R5）は消す。
+ *     スタックで処理するので、消えたあとに並んだ同じ面もまとめる（R U U' R' → 空）
+ *   - 括弧はまたがない（(R U) U' はそのまま）。中身が空になった括弧は回数ごと消す
+ *   - まとめなかった記号は書いたまま（R3 だけなら R3 のまま）。記号は正しい表記、空白は 1 つにそろえる
+ */
+export function simplifyAlg(alg: string): string {
+  parseAlg(alg); // 読めない手順は同じエラーにする
+  const n = normalize(alg);
+  const src = n.src;
+  let at = 0;
+
+  type Item = { face: MoveFace; turns: number; text: string } | { group: string };
+  const text = (item: Item) => ('group' in item ? item.group : item.text);
+
+  function seq(): Item[] {
+    const out: Item[] = [];
+    for (;;) {
+      while (src[at] === ' ') at++;
+      if (at >= src.length) return out;
+      const ch = src[at];
+      if (ch === ')') {
+        at++;
+        return out;
+      }
+      if (ch === '(') {
+        const start = at;
+        at++;
+        const inner = seq();
+        const a = readAmount(n, at, start);
+        const suffix = src.slice(at, a.end);
+        at = a.end;
+        if (inner.length) out.push({ group: '(' + inner.map(text).join(' ') + ')' + suffix });
+        continue;
+      }
+      FACE_RE.lastIndex = at;
+      const fm = FACE_RE.exec(src)!;
+      const a = readAmount(n, at + fm[0].length, at);
+      const face = canonicalFace(fm[0]);
+      const k = a.prime ? -a.n : a.n;
+      const turns = ((k % 5) + 5) % 5;
+      const written = face + src.slice(at + fm[0].length, a.end);
+      at = a.end;
+      const top = out[out.length - 1];
+      if (top && !('group' in top) && top.face === face) {
+        const sum = (top.turns + turns) % 5;
+        if (sum === 0) out.pop();
+        else Object.assign(top, { turns: sum, text: face + SUFFIX[sum] });
+      } else if (turns !== 0) {
+        out.push({ face, turns, text: written });
+      }
+    }
+  }
+  return seq().map(text).join(' ');
+}
+
+/**
+ * 逆の手順（サイトに無いので新しく決めたもの。contracts/notation.md）。
+ *   - 項目の順を逆にし、記号は回数を逆にしてふつうの書き方で書く（R → R'、R2 → R2'、R3 → R2）。0 回の記号は書かない
+ *   - 括弧は中身を逆にし、後ろの回数・' は書いたまま残す。中身が空になった括弧は書かない
+ *   - 記号は正しい表記、空白は 1 つ。読めない手順は SyntaxError
+ */
+export function invertAlg(alg: string): string {
+  parseAlg(alg);
+  const n = normalize(alg);
+  const src = n.src;
+  let at = 0;
+
+  // 1 つの深さを読み、逆にした項目の文字列の列（逆順）を返す
+  function seq(): string[] {
+    const out: string[] = [];
+    for (;;) {
+      while (src[at] === ' ') at++;
+      if (at >= src.length) return out.reverse();
+      const ch = src[at];
+      if (ch === ')') {
+        at++;
+        return out.reverse();
+      }
+      if (ch === '(') {
+        const start = at;
+        at++;
+        const inner = seq();
+        const a = readAmount(n, at, start);
+        const suffix = src.slice(at, a.end);
+        at = a.end;
+        if (inner.length) out.push('(' + inner.join(' ') + ')' + suffix);
+        continue;
+      }
+      FACE_RE.lastIndex = at;
+      const fm = FACE_RE.exec(src)!;
+      const a = readAmount(n, at + fm[0].length, at);
+      at = a.end;
+      const k = a.prime ? -a.n : a.n;
+      const inverse = (5 - (((k % 5) + 5) % 5)) % 5;
+      if (inverse !== 0) out.push(canonicalFace(fm[0]) + SUFFIX[inverse]);
+    }
+  }
+  return seq().join(' ');
+}

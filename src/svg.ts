@@ -3,7 +3,8 @@
 // 要素と属性の順・空白は固定。数値は小数第 2 位に丸め、String(n) で書く（末尾の 0 は付かない）。
 import { normalizeColor, toHex } from './colors.js';
 import { lineWidths, outline, round, stickerPolygons, type Point } from './geometry.js';
-import { stickerColors } from './stickers.js';
+import { IMAGE_KEYS, checkOptions } from './options.js';
+import { resolveColors } from './stickers.js';
 import type { ImageOptions } from './types.js';
 
 const num = (v: number) => String(v);
@@ -11,11 +12,12 @@ const points = (ps: readonly Point[]) => ps.map((p) => `${num(p[0])},${num(p[1])
 const LINE_ATTRS = 'stroke-linejoin="miter" stroke-miterlimit="10"';
 
 /** 最後の層の画像を SVG の文字列で返す */
-export function svg(options: ImageOptions = {}): string {
+export function svg(input?: ImageOptions): string {
+  const options = checkOptions(input, IMAGE_KEYS);
   const size = options.size ?? 200;
   const line = toHex(normalizeColor(options.lineColor ?? '#000000'));
   const background = options.background == null ? null : toHex(normalizeColor(options.background));
-  const colors = stickerColors(options);
+  const colors = resolveColors(options);
   const widths = lineWidths(size);
   const s = num(round(size));
 

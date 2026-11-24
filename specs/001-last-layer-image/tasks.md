@@ -239,22 +239,22 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 ### Tests for User Story 4（先に書いて失敗を確かめる）⚠️
 
-- [ ] T035 [P] [US4] `test/canvas.test.ts`：呼び出しを記録する偽物の canvas（`width`・`height`・`getContext('2d')` が
+- [X] T035 [P] [US4] `test/canvas.test.ts`：呼び出しを記録する偽物の canvas（`width`・`height`・`getContext('2d')` が
   記録する context を返す）で、幅・高さが `size`、`lineJoin` が `miter`・`miterLimit` が 10、`fillStyle` が 16 進、
   26 枚の `moveTo`/`lineTo` の点が `src/geometry.ts` と同じ順・同じ値、太い線の太さ。背景があれば `fillRect`。
   `globalThis.document` を消した状態でも動く
-- [ ] T036 [P] [US4] `test/png.test.ts`：`png({ case: "R U R' U'", size: 300 })` が PNG の先頭 8 バイト
+- [X] T036 [P] [US4] `test/png.test.ts`：`png({ case: "R U R' U'", size: 300 })` が PNG の先頭 8 バイト
   （`89 50 4E 47 0D 0A 1A 0A`）で始まり、IHDR の幅・高さが 300。バイト列が `new Resvg(svg(options)).render().asPng()` と同じで、
   `render().pixels` で読んだ 26 枚の真ん中（多角形の頂点の平均）の画素が `stickerColors` の色と一致する。`@resvg/resvg-js` の読み込みが失敗するように
   `vi.mock` したとき、`Error: Install "@resvg/resvg-js" to export PNG (npm install @resvg/resvg-js)`
 
 ### Implementation for User Story 4
 
-- [ ] T037 [P] [US4] `src/canvas.ts`：`drawCanvas(canvas, options)`。`src/geometry.ts` と `src/stickers.ts` を使い、
+- [X] T037 [P] [US4] `src/canvas.ts`：`drawCanvas(canvas, options)`。`src/geometry.ts` と `src/stickers.ts` を使い、
   サイトの `draw` と同じ順で描く（背景 → 26 枚を塗って細い線 → 太い線）。`getContext('2d')` だけを使う
-- [ ] T038 [P] [US4] `src/png.ts`：`png(options)`。`svg(options)` を作り、`await import('@resvg/resvg-js')` で
+- [X] T038 [P] [US4] `src/png.ts`：`png(options)`。`svg(options)` を作り、`await import('@resvg/resvg-js')` で
   `new Resvg(svg).render().asPng()` を `Uint8Array` にして返す。読み込みに失敗したら案内のエラー
-- [ ] T039 [US4] T035・T036 が通ることを確かめる。`npm run build` のあと、`dist/index.js` が `cases`・`png`・`canvas`・
+- [X] T039 [US4] T035・T036 が通ることを確かめる。`npm run build` のあと、`dist/index.js` が `cases`・`png`・`canvas`・
   `@resvg` を読み込んでいないことを確かめる（`grep`）
 
 **Checkpoint**: すべてのストーリーが通る

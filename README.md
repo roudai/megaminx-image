@@ -1,5 +1,7 @@
 # megaminx-image
 
+English | [日本語](https://github.com/roudai/megaminx-image/blob/main/README.ja.md)
+
 Generate images of the **Megaminx last layer** (the U face and the top row of the five side faces) from an
 algorithm, a case, or sticker colors — like [VisualCube](http://cube.rider.biz/visualcube.php), but for the
 Megaminx. Works the same in Node.js and in the browser, with **no required dependencies**.

@@ -2,5 +2,5 @@
 export { svg } from './svg.js';
 export { stickerColors } from './stickers.js';
 export { canonicalAlg, invertAlg, simplifyAlg } from './notation.js';
-export { COLOR_CODES, DEFAULT_SCHEME } from './colors.js';
+export { COLOR_CODES, DEFAULT_SCHEME, ollScheme } from './colors.js';
 export type { Color, ColorCode, Face, ImageOptions, Scheme, StateOptions } from './types.js';

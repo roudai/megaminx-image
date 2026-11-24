@@ -206,7 +206,7 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 ### Tests for User Story 3（先に書いて失敗を確かめる）⚠️
 
-- [ ] T030 [P] [US3] `test/stickers-options.test.ts`：
+- [X] T030 [P] [US3] `test/stickers-options.test.ts`：
   - `ollScheme()` が U `u`・ほか 11 面 `d`。`ollScheme({ U: 'y' })` の U が `y`。OLL の 259 件で
     `stickerColors({ case: alg, scheme: ollScheme() })` が `ollCase` と同じ
   - `scheme` は置き換え：`{ case: 'R', scheme: { U: 'u' } }` は `TypeError: No color set for face: …`
@@ -216,16 +216,16 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
     `{ alg: A, rotate: k }` が `{ alg: A + ' U'.repeat(k mod 5) }` と同じ。`case`・`state` は向き 0 の結果を
     `data-model.md` の式で付け替えたものと同じ。`{ rotate: 1, stickers: { 1: 'r' } }` は回したあとの番号 1 が `r`。
     `0.5`・`NaN`・`'1'` は `RangeError: "rotate" must be an integer (got …)`
-- [ ] T031 [P] [US3] `test/svg-appearance.test.ts`：`size: 400` で `width="400"`・細い線 `4`・太い線 `8`、
+- [X] T031 [P] [US3] `test/svg-appearance.test.ts`：`size: 400` で `width="400"`・細い線 `4`・太い線 `8`、
   `size: 123.456` の数値が小数第 2 位まで、`lineColor: 'r'` で `stroke="#ff0000"`、`background: '#ABCDEF'` で
   `<rect … fill="#abcdef"/>` が `<g>` の前にある
 
 ### Implementation for User Story 3
 
-- [ ] T032 [US3] `src/colors.ts` に `ollScheme(scheme?)` を足し、`src/index.ts` から export する
-- [ ] T033 [US3] `src/stickers.ts` に `state`（26 色の検証）・`rotate`（`data-model.md` の付け替え）・`stickers`（上書き）を足す。
+- [X] T032 [US3] `src/colors.ts` に `ollScheme(scheme?)` を足し、`src/index.ts` から export する
+- [X] T033 [US3] `src/stickers.ts` に `state`（26 色の検証）・`rotate`（`data-model.md` の付け替え）・`stickers`（上書き）を足す。
   順は「作り方 → 向き → 上書き」
-- [ ] T034 [US3] `src/svg.ts` の見た目の指定を T031 に合わせて仕上げ、T030・T031 が通ることを確かめる
+- [X] T034 [US3] `src/svg.ts` の見た目の指定を T031 に合わせて仕上げ、T030・T031 が通ることを確かめる
 
 **Checkpoint**: US1〜US3 が通る
 

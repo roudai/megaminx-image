@@ -72,3 +72,12 @@ export function resolveScheme(scheme: unknown): Scheme {
   }
   return out;
 }
+
+/** OLL 用の配色：U は渡した配色（既定は DEFAULT_SCHEME）の U の色、ほかの 11 面は 'd'（暗い灰色） */
+export function ollScheme(scheme?: Scheme): Scheme {
+  const base = scheme === undefined ? DEFAULT_SCHEME : resolveScheme(scheme);
+  if (base.U === undefined) throw new TypeError('No color set for face: U');
+  const out: Scheme = {};
+  for (const face of FACES) out[face] = face === 'U' ? base.U : 'd';
+  return out;
+}

@@ -82,13 +82,23 @@ const turned = svg({ case: PLL_CASES[0].alg, rotate: 2 });   // U を 2 回回�
 ## `megaminx-image/canvas`
 
 ```ts
-function drawCanvas(
-  canvas: HTMLCanvasElement | OffscreenCanvas,
-  options?: ImageOptions,
-): void;
+interface CanvasLike {
+  width: number;
+  height: number;
+  getContext(contextId: '2d'): unknown;
+}
+function drawCanvas(canvas: CanvasLike, options?: ImageOptions): void;
+
+export type { CanvasLike, Canvas2DContextLike, ImageOptions };
 ```
 
-- canvas の幅・高さを `size` にして描く。SVG と同じ点・順・太さ・角の形（miter、miterLimit 10）
+- `HTMLCanvasElement`・`OffscreenCanvas` をそのまま渡せる。引数の型をブラウザの型（DOM）に頼らない形にしたのは、
+  DOM の型を入れていない Node.js のプロジェクトでも型の確認が通るようにするため
+- `Canvas2DContextLike` は、描くのに使う 2D の context の部分（`fillStyle`・`strokeStyle`・`lineWidth`・
+  `lineJoin`・`lineCap`・`miterLimit`・`clearRect`・`fillRect`・`beginPath`・`moveTo`・`lineTo`・`closePath`・
+  `fill`・`stroke`）。`getContext('2d')` が `null` を返せば `Error: Canvas 2D context is not available`
+- canvas の幅・高さを `size` にして描く（整数でない `size` は canvas の側で整数に切り捨てられる）。
+  SVG と同じ点・順・太さ・角の形（miter、miterLimit 10、lineCap butt）
 
 ## `megaminx-image/png`
 

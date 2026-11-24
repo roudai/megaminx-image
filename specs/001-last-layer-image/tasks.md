@@ -263,27 +263,27 @@ description: "megaminx-image（最後の層の画像ライブラリ）のタス�
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T040 [P] `test/browser/svg-consistency.spec.ts`：Node.js で決めた入力の一覧（揃った状態、410 件から 20 件の
+- [X] T040 [P] `test/browser/svg-consistency.spec.ts`：Node.js で決めた入力の一覧（揃った状態、410 件から 20 件の
   case、`rotate`・`background`・`size: 123.456` を含む 10 件）の SVG を作り、ブラウザ 3 種で `dist/index.js` を読んで
   同じ入力の SVG を作り、1 文字も違わないことを確かめる（SC-006）。
   あわせて、決めた入力のうち 5 件で、`drawCanvas` で描いた canvas と、SVG を画像として別の canvas に描いたものの
   両方から、26 枚それぞれの真ん中（多角形の頂点の平均。`src/geometry.ts` の内部の関数）の画素を読み、
   `stickerColors` の色と各成分 ±2 以内で一致することを確かめる（spec US4 の 3）。
   `dist/` は `test/browser/playwright.config.ts` の `webServer` で、リポジトリを配る小さなサーバーを立てて読む。`npm run test:browser` で通す
-- [ ] T041 [P] `test/perf.test.ts`：読み込み直後の 1 回を除き、410 件の case を順に 1,000 枚作った平均が 10ms 未満（SC-004）。
+- [X] T041 [P] `test/perf.test.ts`：読み込み直後の 1 回を除き、410 件の case を順に 1,000 枚作った平均が 10ms 未満（SC-004）。
   `npm run test:perf` で通す
-- [ ] T042 `scripts/build-readme-images.mjs`：`dist/` を使い、`docs/images/` に README の例の SVG を作る
+- [X] T042 `scripts/build-readme-images.mjs`：`dist/` を使い、`docs/images/` に README の例の SVG を作る
   （揃った状態、`alg` の例、`case` の例、PLL の例とその `rotate: 1`、OLL 用の配色の例、`background` と
   `lineColor` の例、番号を書き込んだステッカーの並び順の図）。`test/readme-images.test.ts` で、作り直した結果が
   `docs/images/` のファイルと同じことを確かめる
-- [ ] T043 `README.md`（英語）：インストール、5 行の例、記法（`contracts/notation.md`）、作り方 3 種（alg・case・state）と
+- [X] T043 `README.md`（英語）：インストール、5 行の例、記法（`contracts/notation.md`）、作り方 3 種（alg・case・state）と
   `start`・`stickers`・`rotate`、配色（色コードの表・`DEFAULT_SCHEME`・`ollScheme`）、出力（SVG・canvas・PNG・
   `stickerColors`）、ステッカーの並び順（図と表）、ケースのデータ（`megaminx-image/cases`）、手順の道具、エラー、数値の丸め方（小数第 2 位）、
   ライセンス。画像は `docs/images/` を参照する（SC-007、原則 VIII）
-- [ ] T044 パッケージを確かめる：`dependencies` が無い、`npm pack --dry-run` の中身が `dist`・`LICENSE`・
+- [X] T044 パッケージを確かめる：`dependencies` が無い、`npm pack --dry-run` の中身が `dist`・`LICENSE`・
   `README.md`・`package.json` だけ、CommonJS から `node -e "require('megaminx-image')"`（`npm link` か
   `npm pack` した物を別のフォルダで入れる）が動き、4 つの入口の型が解決できる
-- [ ] T045 `quickstart.md` の 1〜8 をすべて実行して結果を確かめ、spec.md の Status を `Implemented` にする
+- [X] T045 `quickstart.md` の 1〜8 をすべて実行して結果を確かめ、spec.md の Status を `Implemented` にする
 
 ---
 

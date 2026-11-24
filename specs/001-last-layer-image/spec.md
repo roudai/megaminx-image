@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-24
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "メガミンクスの最後の層（上面）の画像を、回転記号の手順や色の指定から作る npm ライブラリ
 megaminx-image。ルービックキューブの VisualCube のメガミンクス版のようなもの。既存の Web サイト

@@ -32,7 +32,7 @@
 **Constraints**: 必須の依存 0、DOM・canvas に依存しない本体、同じ入力でバイト単位で同じ SVG、
 サイトと同じ 26 色・同じ記法の読み方
 
-**Scale/Scope**: 公開の関数 7 つ＋定数 3 つ（本体）、`drawCanvas`・`png`・ケースのデータ 410 件
+**Scale/Scope**: 公開の関数 6 つ＋定数 2 つ（本体）、`drawCanvas`・`png`・ケースのデータ 410 件
 
 ## Constitution Check
 
@@ -96,12 +96,14 @@ src/
 ├── state.ts             # 132 枚の状態・回転の置換・applyAlg・上面の取り出し
 ├── colors.ts            # 色コード・16 進・検証・DEFAULT_SCHEME・ollScheme
 ├── stickers.ts          # 入力の検証・作り方の振り分け・26 色の並び（stickerColors）
-├── geometry.ts          # 大きさ 1 の点の表（生成）・多角形・線の太さ・丸め
+├── geometry-table.ts    # 大きさ 1 の点の表（生成）
+├── geometry.ts          # 多角形・線の太さ・丸め
 ├── svg.ts               # SVG の文字列
 ├── canvas.ts            # 入口 megaminx-image/canvas
 ├── png.ts               # 入口 megaminx-image/png
 └── cases/
     ├── index.ts         # 入口 megaminx-image/cases
+    ├── types.ts         # CaseEntry
     ├── pll.ts           # 生成（サイトから）
     └── oll.ts           # 生成（サイトから）
 
@@ -113,6 +115,12 @@ scripts/
 test/
 ├── golden/              # cases.json・notation.json・geometry.json（サイトから書き出し）
 ├── notation.test.ts
+├── notation-tools.test.ts  # canonicalAlg・invertAlg・simplifyAlg
+├── options.test.ts         # 設定の検証とエラー
+├── stickers-options.test.ts # 配色・直接指定・上書き・向き
+├── svg-appearance.test.ts  # 大きさ・線の色・背景
+├── svg/solved-200.svg      # SVG の全文の比べ先
+├── geometry.test.ts
 ├── state.test.ts
 ├── colors.test.ts
 ├── stickers.test.ts     # 正解データ（410 件）との一致
@@ -123,6 +131,10 @@ test/
 ├── readme-images.test.ts
 ├── perf.test.ts
 └── browser/             # Playwright：ブラウザ 3 種で SVG の一致
+
+.github/
+├── workflows/ci.yml     # 変更を取り込む前の確認（原則の品質ゲート）
+└── pull_request_template.md
 
 docs/images/             # README の画像の例（生成）
 README.md                # 英語

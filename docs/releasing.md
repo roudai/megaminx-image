@@ -1,7 +1,11 @@
 # 公開の手順
 
-npm への公開は、GitHub で Release を公開すると GitHub Actions（`.github/workflows/publish.yml`）が行う。
+npm への公開は、GitHub で Release を公開すると GitHub Actions（`.github/workflows/publish.yml`）が
+承認待ちの版として npm に送り（`npm stage publish`）、npmjs.com で承認して出す。
 npm の Trusted Publishing を使うので、トークンもワンタイムパスワードも要らない。
+
+直接の公開（`npm publish`）を Actions に許さないのは、開発用の依存が乗っ取られたときに、承認なしで
+公開されるのを防ぐため。承認には 2 段階認証が要るので、人が確かめた版だけが出る。
 
 ## 1. バージョンを決める
 
@@ -26,8 +30,9 @@ SVG の文字列が 1 バイトでも変わる変更は、テストの正解フ�
 4. Release を公開すると Actions の「Publish」が動く。
    - タグと `package.json` の `version` が違えば、公開せずに止まる
    - `prepublishOnly` で、ビルド・型の確認・テストが走る
-5. npm の段階的な公開（staged publishing）になった場合は、npmjs.com で承認する。
-   承認するまで、その版はインストールできない。
+5. npmjs.com で承認待ちの版を承認する（2 段階認証が要る）。承認するまで、その版はインストールできない。
+   承認すると「Successfully published megaminx-image@…」のメールが届く。手元から `npm stage list megaminx-image` で
+   承認待ちの版を見て、`npm stage approve <stage-id>` で承認することもできる
 
 ## 3. 公開したあとの確認
 
@@ -49,7 +54,7 @@ node -e "import('megaminx-image').then(m => console.log(m.svg({}).slice(0, 40)))
 
 Release のタグと `version` が違う。Release とタグを消し、正しいタグで作り直す。
 
-### Actions の `npm publish` が認証のエラーで失敗した
+### Actions の `npm stage publish` が認証のエラーで失敗した
 
 npmjs.com のパッケージの Settings → Trusted Publisher の設定を確かめる。登録している値は次のとおり。
 
@@ -60,8 +65,14 @@ npmjs.com のパッケージの Settings → Trusted Publisher の設定を確�
 | Repository | `megaminx-image` |
 | Workflow filename | `publish.yml` |
 | Environment | 空欄 |
+| Allowed actions | 「Allow npm publish」「Allow npm dist-tag」とも外す（`npm stage publish` はいつでも許される） |
 
 ワークフローのファイル名を変えたら、ここも変える。
+
+### ワークフローを直してから、もう一度公開したい
+
+失敗した実行の「再実行」は、Release のタグの時点の `publish.yml` で動く。ワークフローを直したときは、
+直したものを main にマージしてから、GitHub の Release とタグを消して作り直す（npm にまだ出ていない版に限る）。
 
 ### 手で公開する
 

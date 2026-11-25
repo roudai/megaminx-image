@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-25
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "megaminx-image に新しいオプション show を足す。例の部分のステッカーだけに色を残し、ほかの側面を灰色にした図を、ライブラリの機能として作れるようにする"
 

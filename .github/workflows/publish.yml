@@ -1,8 +1,9 @@
 name: Publish
 
-# GitHub で Release を公開（published）すると npm に公開する。
+# GitHub で Release を公開（published）すると、npm に承認待ちの版として送る（npm stage publish）。
+# npmjs.com で 2 段階認証をして承認するまで、その版はインストールできない（docs/releasing.md）。
 # npm の Trusted Publishing（OIDC）を使うので、トークンもワンタイムパスワードも要らない。
-# 事前に npmjs.com のパッケージの設定で、このリポジトリと publish.yml を信頼する公開元として登録しておく。
+# Trusted Publisher の設定では「Allow npm publish」を外したままにする（直接の公開を許さない）。
 on:
   release:
     types: [published]
@@ -29,5 +30,6 @@ jobs:
             echo "Tag $GITHUB_REF_NAME does not match package.json version $version"
             exit 1
           fi
+      - run: npm --version
       # ビルド・型の確認・テストは prepublishOnly で走る
-      - run: npm publish
+      - run: npm stage publish

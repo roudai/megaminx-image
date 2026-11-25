@@ -74,8 +74,24 @@ More options for the state:
   svg({ case: alg, rotate: 1 });
   ```
 
-- `stickers` — override some sticker colors by [sticker number](#sticker-order), after `rotate` is applied:
-  `svg({ alg: 'R U', stickers: { 0: 'r', 25: '#123abc' } })`.
+- `show` — keep the colors of only these [stickers](#sticker-order) on the side faces, and make the other side
+  stickers (11–25) dark gray (`d`). The U face is never grayed out. Use it to point at part of a case, such as a
+  block or a pair. The numbers are positions after `rotate`:
+
+  <p>
+    <img src="docs/images/rotate-2.svg" width="120" alt="Without show">
+    <img src="docs/images/show.svg" width="120" alt="show: [18, 19, 20, 21]">
+  </p>
+
+  ```js
+  const y1 = PLL_CASES.find((c) => c.name === 'Y1+').alg; // megaminx-image/cases
+  svg({ case: y1, rotate: 2, show: [18, 19, 20, 21] }); // the block at the bottom right
+  ```
+
+- `stickers` — override some sticker colors by [sticker number](#sticker-order), after `rotate` and `show` are
+  applied: `svg({ alg: 'R U', stickers: { 0: 'r', 25: '#123abc' } })`.
+
+The options are applied in this order: `alg` / `case` / `state` → `rotate` → `show` → `stickers`.
 
 ## Notation
 
@@ -256,7 +272,8 @@ Mistakes throw instead of producing a plausible-looking image:
 | `start` with `state` | `TypeError: "start" cannot be used with "state"` |
 | Misspelled option | `TypeError: Unknown option: "algorithm"` |
 | `state` without 26 colors | `RangeError: "state" must have 26 colors (got 25)` |
-| Sticker number out of range | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
+| Sticker number out of range (`stickers`, `show`) | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
+| `show` that is not an array | `TypeError: "show" must be an array of sticker indices (got 18)` |
 | Non-integer `rotate` | `RangeError: "rotate" must be an integer (got 0.5)` |
 | Bad `size` | `RangeError: "size" must be a positive finite number (got 0)` |
 

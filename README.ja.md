@@ -73,8 +73,23 @@ writeFileSync('case.svg', svg({ case: "R U R' U' R' F R2 U' R' U' R U R' F'" }))
   svg({ case: alg, rotate: 1 });
   ```
 
-- `stickers` — [ステッカーの番号](#ステッカーの番号)を指定して、一部の色を上書きします（`rotate` のあとに効きます）：
+- `show` — 側面で色を残す[ステッカー](#ステッカーの番号)の番号を並べます。ほかの側面のステッカー（11〜25）は濃い灰色（`d`）に
+  なります。U 面は灰色にしません。ブロックやペアのような、ケースの一部を指して見せるのに使います。番号は `rotate` のあとの位置です：
+
+  <p>
+    <img src="docs/images/rotate-2.svg" width="120" alt="show なし">
+    <img src="docs/images/show.svg" width="120" alt="show: [18, 19, 20, 21]">
+  </p>
+
+  ```js
+  const y1 = PLL_CASES.find((c) => c.name === 'Y1+').alg; // megaminx-image/cases
+  svg({ case: y1, rotate: 2, show: [18, 19, 20, 21] }); // 右下のブロック
+  ```
+
+- `stickers` — [ステッカーの番号](#ステッカーの番号)を指定して、一部の色を上書きします（`rotate` と `show` のあとに効きます）：
   `svg({ alg: 'R U', stickers: { 0: 'r', 25: '#123abc' } })`
+
+オプションが効く順は、`alg` / `case` / `state` → `rotate` → `show` → `stickers` です。
 
 ## 記法
 
@@ -253,7 +268,8 @@ Megaminx Image Editor のものです。入口が別なので、import しなけ
 | `start` と `state` を一緒に | `TypeError: "start" cannot be used with "state"` |
 | オプションの名前の書き間違い | `TypeError: Unknown option: "algorithm"` |
 | `state` が 26 色でない | `RangeError: "state" must have 26 colors (got 25)` |
-| ステッカーの番号が範囲の外 | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
+| ステッカーの番号が範囲の外（`stickers`・`show`） | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
+| `show` が配列でない | `TypeError: "show" must be an array of sticker indices (got 18)` |
 | `rotate` が整数でない | `RangeError: "rotate" must be an integer (got 0.5)` |
 | `size` がおかしい | `RangeError: "size" must be a positive finite number (got 0)` |
 

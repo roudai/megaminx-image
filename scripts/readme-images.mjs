@@ -23,6 +23,9 @@ export function readmeImages(lib) {
     'rotate-0.svg': lib.svg({ case: a1.alg, size: 150 }),
     'rotate-1.svg': lib.svg({ case: a1.alg, size: 150, rotate: 1 }),
     'rotate-2.svg': lib.svg({ case: a1.alg, size: 150, rotate: 2 }),
+    // show：Y1+ を rotate: 2 で見ると、18〜21（下の面のエッジとコーナー、右隣の面のエッジ）がちょうど 1 つのブロック
+    // （ほかの側面に揃った面もブロックも無い）。PLL のデータを全部調べて、この条件に合うものから選んだ
+    'show.svg': lib.svg({ case: pll('Y1+').alg, size: 150, rotate: 2, show: [18, 19, 20, 21] }),
     'oll.svg': lib.svg({ case: oll1a.alg, scheme: lib.ollScheme() }),
     'style.svg': lib.svg({ case: a1.alg, background: '#ffffff', lineColor: '#1e90ff', size: 200 }),
     'sticker-order.svg': stickerOrder(lib),

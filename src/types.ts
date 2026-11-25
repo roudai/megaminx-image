@@ -24,6 +24,11 @@ export interface StateOptions {
   start?: string;
   /** 向き：できた状態に U を k 回回した向き（整数、既定 0） */
   rotate?: number;
+  /**
+   * 色を残すステッカーの番号（0〜25、回したあとの位置）。側面の上段（11〜25）のうち、ここに無いものを 'd' にする。
+   * 上面（0〜10）は変えない。stickers はこの後に効く
+   */
+  show?: readonly number[];
   /** 番号（0〜25）→ 色 の上書き（回したあとの位置） */
   stickers?: Readonly<Record<number, Color>>;
   /** 配色（既定は DEFAULT_SCHEME。足し合わせず置き換える） */

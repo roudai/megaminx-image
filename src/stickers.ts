@@ -1,14 +1,15 @@
 // 設定から 26 色の並びを作る（data-model.md「ステッカーの色の並び」「画像の向き」）。
-// 順：作り方（alg・case・state）→ 向き（rotate）→ 上書き（stickers）。
+// 順：作り方（alg・case・state）→ 向き（rotate）→ 色を残す番号（show）→ 上書き（stickers）。
 //   alg：start（既定は揃った状態）から手順を回す
 //   case：start から手順の逆を回し、持ち替えの合計を打ち消す（サイトの case と同じ）
 //   state：26 色をそのまま使う
 import { DEFAULT_SCHEME, normalizeColor, resolveScheme } from './colors.js';
-import { STATE_KEYS, checkOptions, show } from './options.js';
+import { STATE_KEYS, checkOptions, describe } from './options.js';
 import { applyAlg, solved, topFaces } from './state.js';
 import type { Color, ImageOptions, Scheme, StateOptions } from './types.js';
 
 const COUNT = 26;
+const FIRST_SIDE = 11; // 側面の上段の最初の番号
 
 /** 26 枚の色（並び順は README・data-model.md） */
 export function stickerColors(options?: StateOptions): Color[] {
@@ -19,6 +20,7 @@ export function stickerColors(options?: StateOptions): Color[] {
 export function resolveColors(options: ImageOptions): Color[] {
   let colors = options.state !== undefined ? directState(options.state) : fromAlg(options);
   if (options.rotate !== undefined) colors = rotateColors(colors, checkRotate(options.rotate));
+  if (options.show !== undefined) colors = applyShow(colors, options.show);
   if (options.stickers !== undefined) colors = override(colors, options.stickers);
   return colors;
 }
@@ -42,14 +44,14 @@ function fromAlg(options: ImageOptions): Color[] {
 }
 
 function directState(state: unknown): Color[] {
-  if (!Array.isArray(state)) throw new TypeError(`"state" must be an array of ${COUNT} colors (got ${show(state)})`);
+  if (!Array.isArray(state)) throw new TypeError(`"state" must be an array of ${COUNT} colors (got ${describe(state)})`);
   if (state.length !== COUNT) throw new RangeError(`"state" must have ${COUNT} colors (got ${state.length})`);
   return state.map((c) => normalizeColor(c));
 }
 
 function checkRotate(rotate: unknown): number {
   if (typeof rotate !== 'number' || !Number.isInteger(rotate)) {
-    throw new RangeError(`"rotate" must be an integer (got ${show(rotate)})`);
+    throw new RangeError(`"rotate" must be an integer (got ${describe(rotate)})`);
   }
   return ((rotate % 5) + 5) % 5;
 }
@@ -71,9 +73,26 @@ function rotateColors(colors: readonly Color[], k: number): Color[] {
   });
 }
 
+/**
+ * 側面の上段（11〜25）のうち、show に無い番号を 'd' にする（specs/002-show-option の data-model.md）。
+ * 上面（0〜10）は変えない。番号は集まりとして扱う（並び順・重なりは結果に効かない）
+ */
+function applyShow(colors: readonly Color[], show: unknown): Color[] {
+  if (!Array.isArray(show)) {
+    throw new TypeError(`"show" must be an array of sticker indices (got ${describe(show)})`);
+  }
+  for (const index of show) {
+    if (typeof index !== 'number' || !Number.isInteger(index) || index < 0 || index >= COUNT) {
+      throw new RangeError(`Sticker index out of range: ${describe(index)} (expected 0-${COUNT - 1})`);
+    }
+  }
+  const keep = new Set<number>(show);
+  return colors.map((c, i) => (i >= FIRST_SIDE && !keep.has(i) ? 'd' : c));
+}
+
 function override(colors: readonly Color[], stickers: unknown): Color[] {
   if (stickers === null || typeof stickers !== 'object') {
-    throw new TypeError(`"stickers" must be an object (got ${show(stickers)})`);
+    throw new TypeError(`"stickers" must be an object (got ${describe(stickers)})`);
   }
   const out = colors.slice();
   for (const [key, color] of Object.entries(stickers)) {

@@ -1,11 +1,11 @@
 // 設定の検証（contracts/api.md のエラーの表・原則 VI）
 import type { ImageOptions } from './types.js';
 
-export const STATE_KEYS = ['alg', 'case', 'state', 'start', 'rotate', 'stickers', 'scheme'] as const;
+export const STATE_KEYS = ['alg', 'case', 'state', 'start', 'rotate', 'show', 'stickers', 'scheme'] as const;
 export const IMAGE_KEYS = [...STATE_KEYS, 'size', 'lineColor', 'background'] as const;
 
 /** エラーのメッセージに入れる値の書き方（NaN・Infinity も読めるように） */
-export function show(value: unknown): string {
+export function describe(value: unknown): string {
   if (typeof value === 'number' || typeof value === 'bigint' || value === undefined) return String(value);
   try {
     return JSON.stringify(value) ?? String(value);
@@ -21,7 +21,7 @@ export function show(value: unknown): string {
 export function checkOptions(options: unknown, allowed: readonly string[]): ImageOptions {
   if (options === undefined) return {};
   if (options === null || typeof options !== 'object' || Array.isArray(options)) {
-    throw new TypeError(`Options must be an object (got ${show(options)})`);
+    throw new TypeError(`Options must be an object (got ${describe(options)})`);
   }
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(options)) {
@@ -30,7 +30,7 @@ export function checkOptions(options: unknown, allowed: readonly string[]): Imag
   }
   for (const key of ['alg', 'case', 'start'] as const) {
     if (key in out && typeof out[key] !== 'string') {
-      throw new TypeError(`"${key}" must be a string (got ${show(out[key])})`);
+      throw new TypeError(`"${key}" must be a string (got ${describe(out[key])})`);
     }
   }
   const modes = ['alg', 'case', 'state'].filter((k) => k in out);
@@ -39,7 +39,7 @@ export function checkOptions(options: unknown, allowed: readonly string[]): Imag
   if ('size' in out) {
     const size = out.size;
     if (typeof size !== 'number' || !Number.isFinite(size) || size <= 0) {
-      throw new RangeError(`"size" must be a positive finite number (got ${show(size)})`);
+      throw new RangeError(`"size" must be a positive finite number (got ${describe(size)})`);
     }
   }
   return out as ImageOptions;

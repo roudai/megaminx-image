@@ -93,6 +93,33 @@ More options for the state:
 
 The options are applied in this order: `alg` / `case` / `state` → `rotate` → `show` → `stickers`.
 
+## Arrows
+
+`arrows` draws arrows between [stickers](#sticker-order), on top of the image. Each arrow is `[from, to]`: a straight
+line from the center of sticker `from` to the center of sticker `to`, with an arrowhead at `to`. Like `show`, the
+numbers are positions after `rotate`.
+
+```js
+const h1 = PLL_CASES.find((c) => c.name === 'H1+').alg; // megaminx-image/cases
+svg({ case: h1, arrows: [[18, 15], [15, 12], [12, 24], [24, 21], [21, 18]] });
+
+const z1 = PLL_CASES.find((c) => c.name === 'Z1').alg;
+svg({ case: z1, arrows: [[12, 15], [15, 12], [18, 21], [21, 18]] }); // two swaps
+```
+
+<p>
+  <img src="docs/images/arrows.svg" width="150" alt="H1+ with arrows">
+  <img src="docs/images/arrows-swap.svg" width="150" alt="Z1 with double-headed arrows">
+</p>
+
+- `[a, b]` and `[b, a]` together make one double-headed arrow (for a swap). The same arrow given twice is drawn once.
+- Arrows have a thin white outline so that they stand out on the black lines. `arrowColor` sets their color
+  (default `'#000000'`); the outline stays white.
+- The line width and the arrowhead scale with `size`.
+- The library only draws from `from` to `to`; what the direction means is up to you. A common choice is
+  "to solve, the piece at `from` goes to `to`" (the opposite of how the pieces move when you apply the algorithm).
+  The H1+ example above follows it: in the `case` image, each edge points to where it belongs.
+
 ## Notation
 
 | Notation | Meaning |
@@ -225,7 +252,7 @@ stickerColors({ alg: 'F' });
 ```
 
 Returns the 26 colors in [sticker order](#sticker-order). It takes the same options as `svg` except
-`size`, `lineColor` and `background`.
+`size`, `lineColor`, `background`, `arrows` and `arrowColor`.
 
 ## Sticker order
 
@@ -274,6 +301,10 @@ Mistakes throw instead of producing a plausible-looking image:
 | `state` without 26 colors | `RangeError: "state" must have 26 colors (got 25)` |
 | Sticker number out of range (`stickers`, `show`) | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
 | `show` that is not an array | `TypeError: "show" must be an array of sticker indices (got 18)` |
+| `arrows` that is not an array | `TypeError: "arrows" must be an array of [from, to] pairs (got 18)` |
+| An arrow that is not `[from, to]` | `TypeError: Each arrow must be [from, to] (got [1,2,3])` |
+| An arrow number out of range | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
+| An arrow from a sticker to itself | `RangeError: An arrow must connect two different stickers (got [5,5])` |
 | Non-integer `rotate` | `RangeError: "rotate" must be an integer (got 0.5)` |
 | Bad `size` | `RangeError: "size" must be a positive finite number (got 0)` |
 

@@ -43,4 +43,11 @@ export interface ImageOptions extends StateOptions {
   lineColor?: Color;
   /** 背景の色。既定 null（透明） */
   background?: Color | null;
+  /**
+   * ステッカーからステッカーへの矢印 [from, to] の並び（番号は rotate の後の図の上の位置）。
+   * [a, b] と [b, a] は 1 本の両矢印にまとめる。ステッカーと線の上に、白い縁取り付きで描く
+   */
+  arrows?: readonly (readonly [number, number])[];
+  /** 矢印の色。既定 '#000000'（白い縁取りは固定） */
+  arrowColor?: Color;
 }

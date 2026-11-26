@@ -2,7 +2,7 @@
 import type { ImageOptions } from './types.js';
 
 export const STATE_KEYS = ['alg', 'case', 'state', 'start', 'rotate', 'show', 'stickers', 'scheme'] as const;
-export const IMAGE_KEYS = [...STATE_KEYS, 'size', 'lineColor', 'background'] as const;
+export const IMAGE_KEYS = [...STATE_KEYS, 'size', 'lineColor', 'background', 'arrows', 'arrowColor'] as const;
 
 /** エラーのメッセージに入れる値の書き方（NaN・Infinity も読めるように） */
 export function describe(value: unknown): string {

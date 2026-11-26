@@ -91,6 +91,32 @@ writeFileSync('case.svg', svg({ case: "R U R' U' R' F R2 U' R' U' R U R' F'" }))
 
 オプションが効く順は、`alg` / `case` / `state` → `rotate` → `show` → `stickers` です。
 
+## 矢印
+
+`arrows` で、[ステッカー](#ステッカーの番号)からステッカーへ矢印を、画像のいちばん上に描きます。1 本の矢印は `[from, to]` で、
+ステッカー `from` の中心からステッカー `to` の中心へ向かう直線に、`to` の側の矢じりが付きます。`show` と同じく、番号は
+`rotate` のあとの位置です。
+
+```js
+const h1 = PLL_CASES.find((c) => c.name === 'H1+').alg; // megaminx-image/cases
+svg({ case: h1, arrows: [[18, 15], [15, 12], [12, 24], [24, 21], [21, 18]] });
+
+const z1 = PLL_CASES.find((c) => c.name === 'Z1').alg;
+svg({ case: z1, arrows: [[12, 15], [15, 12], [18, 21], [21, 18]] }); // 2 点交換が 2 組
+```
+
+<p>
+  <img src="docs/images/arrows.svg" width="150" alt="矢印付きの H1+">
+  <img src="docs/images/arrows-swap.svg" width="150" alt="両矢印付きの Z1">
+</p>
+
+- `[a, b]` と `[b, a]` の両方があると、両端に矢じりの付いた 1 本の矢印になります（2 点交換を示すため）。同じ矢印を 2 回書いても 1 本だけ描きます。
+- 矢印には、黒い線の上でも見えるように細い白い縁取りが付きます。`arrowColor` で矢印の色を変えられます（既定は `'#000000'`）。縁取りは白のままです。
+- 線の太さと矢じりの大きさは、`size` に合わせて変わります。
+- ライブラリは `from` から `to` へ描くだけで、向きの意味は使う側が決めます。よく使う決め方は
+  「揃えるには、`from` にあるピースが `to` へ行く」（手順を回したときのピースの動きとは逆向き）です。上の H1+ の例はこの決め方で、
+  `case` の図で、それぞれのエッジが行くべき位置を指しています。
+
 ## 記法
 
 | 記法 | 意味 |
@@ -221,7 +247,7 @@ stickerColors({ alg: 'F' });
 // ['u', 'u', 'u', 'u', 'u', 'c', 'c', 'c', 'u', 'u', 'u', 'p', 'p', 'p', 'c', 'c', 'g', 'a', 'a', 'a', 'u', 'o', 'o', 'l', 'l', 'l']
 ```
 
-26 色を[ステッカーの番号](#ステッカーの番号)の順で返します。`size`・`lineColor`・`background` 以外は、`svg` と同じ
+26 色を[ステッカーの番号](#ステッカーの番号)の順で返します。`size`・`lineColor`・`background`・`arrows`・`arrowColor` 以外は、`svg` と同じ
 オプションを使えます。
 
 ## ステッカーの番号
@@ -270,6 +296,10 @@ Megaminx Image Editor のものです。入口が別なので、import しなけ
 | `state` が 26 色でない | `RangeError: "state" must have 26 colors (got 25)` |
 | ステッカーの番号が範囲の外（`stickers`・`show`） | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
 | `show` が配列でない | `TypeError: "show" must be an array of sticker indices (got 18)` |
+| `arrows` が配列でない | `TypeError: "arrows" must be an array of [from, to] pairs (got 18)` |
+| 矢印が `[from, to]` の形でない | `TypeError: Each arrow must be [from, to] (got [1,2,3])` |
+| 矢印の番号が範囲の外 | `RangeError: Sticker index out of range: 26 (expected 0-25)` |
+| 矢印の始まりと終わりが同じステッカー | `RangeError: An arrow must connect two different stickers (got [5,5])` |
 | `rotate` が整数でない | `RangeError: "rotate" must be an integer (got 0.5)` |
 | `size` がおかしい | `RangeError: "size" must be a positive finite number (got 0)` |
 

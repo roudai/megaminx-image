@@ -20,6 +20,11 @@ const INPUTS: Record<string, unknown>[] = [
   { alg: "R U'", stickers: { 0: 'x', 25: 'z' } },
   { start: "R U R'", case: "F R U'" },
   { case: "(R U R' U')2 y'", background: 'w', size: 250 },
+  // 矢印（specs/003-arrows。平方根と割り算を使うので、ブラウザーでも同じ文字列になるかを確かめる）
+  { case: PLL_CASES.find((c) => c.name === 'H1+')!.alg, arrows: [[18, 15], [15, 12], [12, 24], [24, 21], [21, 18]] },
+  { arrows: [[12, 15], [15, 12], [2, 12], [12, 2], [0, 25]], size: 123.456 },
+  { case: PLL_CASES[3].alg, rotate: 2, show: [18, 19, 20, 21], arrows: [[19, 7], [3, 21]], arrowColor: 'r', size: 77 },
+  { arrows: Array.from({ length: 25 }, (_, i) => [i, i + 1]), size: 1000 },
 ];
 
 test.beforeEach(async ({ page }) => {

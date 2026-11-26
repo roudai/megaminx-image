@@ -26,6 +26,10 @@ export function readmeImages(lib) {
     // show：Y1+ を rotate: 2 で見ると、18〜21（下の面のエッジとコーナー、右隣の面のエッジ）がちょうど 1 つのブロック
     // （ほかの側面に揃った面もブロックも無い）。PLL のデータを全部調べて、この条件に合うものから選んだ
     'show.svg': lib.svg({ case: pll('Y1+').alg, size: 150, rotate: 2, show: [18, 19, 20, 21] }),
+    // arrows：H1+ のエッジの 5 点交換（今そこにあるエッジが、揃えると行く位置へ）と、Z1 の 2 組の 2 点交換（両矢印）。
+    // どちらも、case の図の色から求めた組と同じ（test/arrows.test.ts の SC-002）
+    'arrows.svg': lib.svg({ case: pll('H1+').alg, size: 150, arrows: [[18, 15], [15, 12], [12, 24], [24, 21], [21, 18]] }),
+    'arrows-swap.svg': lib.svg({ case: pll('Z1').alg, size: 150, arrows: [[12, 15], [15, 12], [18, 21], [21, 18]] }),
     'oll.svg': lib.svg({ case: oll1a.alg, scheme: lib.ollScheme() }),
     'style.svg': lib.svg({ case: a1.alg, background: '#ffffff', lineColor: '#1e90ff', size: 200 }),
     'sticker-order.svg': stickerOrder(lib),

@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-26
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "megaminx-image に、ステッカーからステッカーへ矢印を描くオプション arrows と arrowColor を足す。PLL の図で、ピースの動き（エッジの 5 点交換、コーナーの 3 点交換など）を矢印で示したい"
 

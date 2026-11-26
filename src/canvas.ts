@@ -2,6 +2,7 @@
 // SVG と同じ点・同じ描く順・同じ太さ・同じ角の形（サイトの js/megaminx-draw.js の draw と同じ）。
 // 渡された canvas の getContext('2d') だけを使い、document などのグローバルには触れない
 // （OffscreenCanvas でも動く）。
+import { arrowShapes, arrowWidths, checkArrows } from './arrows.js';
 import { normalizeColor, toHex } from './colors.js';
 import { lineWidths, outline, stickerPolygons, type Point } from './geometry.js';
 import { IMAGE_KEYS, checkOptions } from './options.js';
@@ -40,6 +41,8 @@ export function drawCanvas(canvas: CanvasLike, input?: ImageOptions): void {
   const line = toHex(normalizeColor(options.lineColor ?? '#000000'));
   const background = options.background == null ? null : toHex(normalizeColor(options.background));
   const colors = resolveColors(options);
+  const shapes = arrowShapes(size, checkArrows(options.arrows));
+  const arrowColor = toHex(normalizeColor(options.arrowColor ?? '#000000'));
 
   canvas.width = size;
   canvas.height = size;
@@ -85,6 +88,27 @@ export function drawCanvas(canvas: CanvasLike, input?: ImageOptions): void {
   ctx.beginPath();
   for (const d of o.dividers) path(d, false);
   ctx.stroke();
+
+  // 矢印（SVG と同じ点・同じ順）：全部の白い縁取り → 全部の矢印
+  if (shapes.length > 0) {
+    const aw = arrowWidths(size);
+    const heads = shapes.flatMap((a) => a.heads);
+    const draw = (color: string, lineWidth: number, headStroke: number | null) => {
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      for (const a of shapes) path(a.line, false);
+      ctx.stroke();
+      if (headStroke !== null) ctx.lineWidth = headStroke;
+      ctx.beginPath();
+      for (const h of heads) path(h, true);
+      ctx.fill();
+      if (headStroke !== null) ctx.stroke();
+    };
+    draw('#ffffff', aw.haloLine, aw.halo);
+    draw(arrowColor, aw.line, null);
+  }
 }
 
 export type { ImageOptions } from './types.js';

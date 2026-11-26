@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-specs/002-show-option/plan.md
+specs/003-arrows/plan.md
 <!-- SPECKIT END -->
 
 # 言語
